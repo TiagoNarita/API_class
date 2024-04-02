@@ -2,11 +2,25 @@ const express = require("express");
 
 const server = express();
 
-//localhost:3000/curso/2
-server.get("/curso/:id", (req, res) => {
-  const id = req.params.id;
+server.use(express.json());
 
-  return res.json({ curso: `curso: ${id}` });
+const cursos = ["node JS", "JavaScript", "React Native"];
+
+server.get("/cursos", (req, res) => {
+  return res.json(cursos);
+});
+//localhost:3000/curso/2
+server.get("/cursos/:index", (req, res) => {
+  const { index } = req.params;
+
+  return res.json(`curso escolhido foi: ${cursos[index]}`);
+});
+
+server.post("/cursos", (req, res) => {
+  const { name } = req.body;
+  cursos.push(name);
+
+  return res.json(cursos);
 });
 
 server.listen(3000);
