@@ -4,7 +4,24 @@ const server = express();
 
 server.use(express.json());
 
+//Query params = ?node=NodeJS (be in the url)
+//Route params = /curso/2
+//Request Body = {nome: "Nodejs", tipo: "backend"}
+
 const cursos = ["node JS", "JavaScript", "React Native"];
+
+server.use((req, res, next) => {
+  console.log(`URL CHAMADA: ${req.url}`);
+
+  return next();
+});
+
+function checkCurso(req, res, next) {
+  if (!req.body.name) {
+    return res.status(400).json({ error: "Nome do curso obrigatório" });
+  }
+  return next();
+}
 
 //get all cursos
 server.get("/cursos", (req, res) => {
@@ -19,7 +36,7 @@ server.get("/cursos/:index", (req, res) => {
 });
 
 //criando um novo curso
-server.post("/cursos", (req, res) => {
+server.post("/cursos", checkCurso, (req, res) => {
   const { name } = req.body;
   cursos.push(name);
 
@@ -27,7 +44,7 @@ server.post("/cursos", (req, res) => {
 });
 
 //atualizando algum curso
-server.put("/cursos/:index", (req, res) => {
+server.put("/cursos/:index", checkCurso, (req, res) => {
   const { index } = req.params;
   const { name } = req.body;
 
