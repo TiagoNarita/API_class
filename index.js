@@ -15,7 +15,7 @@ server.use((req, res, next) => {
 
   return next();
 });
-
+fsadf;
 function checkCurso(req, res, next) {
   if (!req.body.name) {
     return res.status(400).json({ error: "Nome do curso obrigatório" });
