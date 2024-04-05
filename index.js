@@ -15,7 +15,7 @@ server.use((req, res, next) => {
 
   return next();
 });
-fsadf;
+
 function checkCurso(req, res, next) {
   if (!req.body.name) {
     return res.status(400).json({ error: "Nome do curso obrigatório" });
@@ -23,16 +23,27 @@ function checkCurso(req, res, next) {
   return next();
 }
 
+function checkIndexCurso(req, res, next) {
+  const curso = cursos[req.params.index];
+
+  if (!curso) {
+    return res.status(400).json({ error: "O curso nao existe" });
+  }
+
+  req.curso = curso;
+
+  return next();
+}
 //get all cursos
 server.get("/cursos", (req, res) => {
   return res.json(cursos);
 });
 
 //localhost:3000/curso/2
-server.get("/cursos/:index", (req, res) => {
+server.get("/cursos/:index", checkIndexCurso, (req, res) => {
   const { index } = req.params;
 
-  return res.json(`curso escolhido foi: ${cursos[index]}`);
+  return res.json(cursos[index]);
 });
 
 //criando um novo curso
@@ -44,7 +55,7 @@ server.post("/cursos", checkCurso, (req, res) => {
 });
 
 //atualizando algum curso
-server.put("/cursos/:index", checkCurso, (req, res) => {
+server.put("/cursos/:index", checkCurso, checkIndexCurso, (req, res) => {
   const { index } = req.params;
   const { name } = req.body;
 
@@ -54,7 +65,7 @@ server.put("/cursos/:index", checkCurso, (req, res) => {
 });
 
 //excluindo algum curso
-server.delete("/cursos/:index", (req, res) => {
+server.delete("/cursos/:index", checkIndexCurso, (req, res) => {
   const { index } = req.params;
   cursos.splice(index, 1);
 
